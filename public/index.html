@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Excel Realtime Dashboard</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- HEADER CHUNG -->
+  <header class="bg-white shadow p-4 flex flex-col md:flex-row md:items-center md:justify-between">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">
+      📊 Excel Realtime Dashboard
+    </h1>
+    <div class="flex items-center space-x-2">
+      <button id="btn-raw"
+              class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">
+        Raw View
+      </button>
+      <button id="btn-summary"
+              class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded">
+        Summary View
+      </button>
+      <span class="ml-4 text-gray-600 text-sm">
+        Cập nhật: <span id="last-updated">--:--:--</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- NỘI DUNG CHÍNH -->
+  <main class="flex-1 p-6 space-y-6">
+    <!-- Bảng Raw/Summary -->
+    <div id="table-container"
+         class="bg-white rounded-lg shadow overflow-auto p-4">
+      <!-- Table sẽ được inject bởi script.js -->
+    </div>
+
+    <!-- Bảng Chi Tiết (Order, Brand Code, Product Type, Quantity) -->
+    <div id="details-container"
+         class="bg-white rounded-lg shadow overflow-auto p-4 hidden">
+      <!-- Chi tiết sẽ được inject khi click máy -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white text-center text-gray-500 text-sm p-4">
+    © 2025 Your Company
+  </footer>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>
