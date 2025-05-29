@@ -235,3 +235,7 @@ async function searchOrders() {
 
   document.getElementById('searchResult').innerHTML = html;
 }
+function clearSearch() {
+  document.getElementById('searchBox').value = '';
+  document.getElementById('searchResult').innerHTML = '';
+}

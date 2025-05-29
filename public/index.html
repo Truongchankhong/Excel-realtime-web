@@ -1,61 +1,35 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Excel Realtime Dashboard</title>
-  <!-- Tailwind CSS via CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centre Line Schedule Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-
-  <!-- HEADER CHUNG -->
-  <header class="bg-white shadow p-4 flex flex-col md:flex-row md:items-center md:justify-between">
-    <h1 class="text-2xl font-semibold text-gray-800 mb-4 md:mb-0">
-      📊 Excel Realtime Dashboard
+<body class="bg-gray-100 text-gray-900 font-sans">
+  <div class="max-w-6xl mx-auto p-4">
+    <h1 class="text-2xl font-bold flex items-center gap-2">
+      <img src="https://img.icons8.com/color/48/000000/combo-chart--v1.png" width="32" />
+      Centre Line Schedule Dashboard
     </h1>
-    <div class="flex items-center space-x-2">
-      <button id="btn-raw"
-              class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded">
-        Raw View
-      </button>
-      <button id="btn-summary"
-              class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded">
-        Summary View
-      </button>
-      <span class="ml-4 text-gray-600 text-sm">
-        Cập nhật: <span id="last-updated">--:--:--</span>
-      </span>
+
+    <div class="flex items-center gap-2 mt-4">
+      <button id="btn-raw" class="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300">Raw View</button>
+      <button id="btn-summary" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Summary View</button>
+      <div id="last-updated" class="ml-auto text-sm text-gray-500">Cập nhật: --:--</div>
     </div>
-  </header>
 
-  <!-- NỘI DUNG CHÍNH -->
-  <main class="flex-1 p-6 space-y-6">
-    <!-- Bảng Raw/Summary -->
-    <div id="table-container"
-         class="bg-white rounded-lg shadow overflow-auto p-4">
-      <!-- Table sẽ được inject bởi script.js -->
+    <div class="mt-6 flex items-center gap-2">
+      <input id="searchBox" placeholder="RPRO-1234|RPRO-5678..." class="flex-1 border p-2 rounded" />
+      <button onclick="searchOrders()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Tìm</button>
+      <button onclick="clearSearch()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Xóa kết quả</button>
     </div>
-    <div style="margin-bottom: 20px;">
-  <input id="searchBox" type="text" placeholder="Nhập mã đơn, ví dụ: RPRO-250421-0356|RPRO-250502-0390" style="width: 400px; padding: 8px;">
-  <button onclick="searchOrders()">Tìm</button>
-</div>
 
-<div id="searchResult" style="margin-top: 20px;"></div>
+    <div id="searchResult" class="mt-4"></div>
+    <div id="table-container" class="mt-6"></div>
+    <div id="details-container" class="mt-4 hidden"></div>
+  </div>
 
-    <!-- Bảng Chi Tiết (Order, Brand Code, Product Type, Quantity) -->
-    <div id="details-container"
-         class="bg-white rounded-lg shadow overflow-auto p-4 hidden">
-      <!-- Chi tiết sẽ được inject khi click máy -->
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="bg-white text-center text-gray-500 text-sm p-4">
-    © 2025 Your Company
-  </footer>
-
-  <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>
