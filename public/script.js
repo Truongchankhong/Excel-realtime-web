@@ -188,16 +188,15 @@ async function searchOrders() {
   const header = data[0];
   const results = [];
 
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const order = String(row[2] || '').toUpperCase();
-    if (orderList.includes(order)) {
+  for (const code of orderList) {
+    const found = data.find(row => String(row[2] || '').toUpperCase() === code);
+    if (found) {
       results.push({
-        order,
-        brand: row[3] || '',
-        type: row[5] || '',
-        quantity: row[6] || '',
-        machine: row[57] || ''
+        order: code,
+        brand: found[3] || '',
+        type: found[5] || '',
+        quantity: found[6] || '',
+        machine: found[57] || ''
       });
     }
   }
@@ -219,7 +218,6 @@ async function searchOrders() {
         </thead>
         <tbody>
     `;
-
     results.forEach(row => {
       html += `
         <tr>
