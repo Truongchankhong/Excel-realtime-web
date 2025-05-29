@@ -36,6 +36,12 @@
          class="bg-white rounded-lg shadow overflow-auto p-4">
       <!-- Table sẽ được inject bởi script.js -->
     </div>
+    <div style="margin-bottom: 20px;">
+  <input id="searchBox" type="text" placeholder="Nhập mã đơn, ví dụ: RPRO-250421-0356|RPRO-250502-0390" style="width: 400px; padding: 8px;">
+  <button onclick="searchOrders()">Tìm</button>
+</div>
+
+<div id="searchResult" style="margin-top: 20px;"></div>
 
     <!-- Bảng Chi Tiết (Order, Brand Code, Product Type, Quantity) -->
     <div id="details-container"

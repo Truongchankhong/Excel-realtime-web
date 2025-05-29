@@ -175,3 +175,65 @@ btnSummary.addEventListener('click', loadSummary);
 
 // Default: load Summary View
 loadSummary();
+async function searchOrders() {
+  const input = document.getElementById('searchBox').value.trim();
+  if (!input) return;
+
+  const orderList = input.split('|').map(o => o.trim().toUpperCase());
+  const res = await fetch('/api/data');
+  const data = await res.json();
+
+  if (!data || data.length <= 1) return;
+
+  const header = data[0];
+  const results = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const order = String(row[2] || '').toUpperCase();
+    if (orderList.includes(order)) {
+      results.push({
+        order,
+        brand: row[3] || '',
+        type: row[5] || '',
+        quantity: row[6] || '',
+        machine: row[57] || ''
+      });
+    }
+  }
+
+  let html = `<h3>Kết quả tìm kiếm:</h3>`;
+  if (results.length === 0) {
+    html += `<p>Không tìm thấy đơn hàng nào.</p>`;
+  } else {
+    html += `
+      <table border="1" cellspacing="0" cellpadding="5">
+        <thead>
+          <tr>
+            <th>ORDER</th>
+            <th>BRAND CODE</th>
+            <th>PRODUCT TYPE</th>
+            <th>QUANTITY</th>
+            <th>MACHINE</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    results.forEach(row => {
+      html += `
+        <tr>
+          <td>${row.order}</td>
+          <td>${row.brand}</td>
+          <td>${row.type}</td>
+          <td>${row.quantity}</td>
+          <td>${row.machine}</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+  }
+
+  document.getElementById('searchResult').innerHTML = html;
+}
