@@ -1,13 +1,11 @@
 // public/script.js
 
-// --- DOM elements ---
 const container        = document.getElementById('table-container');
 const detailsContainer = document.getElementById('details-container');
 const lastUpdatedEl    = document.getElementById('last-updated');
 const btnRaw           = document.getElementById('btn-raw');
 const btnSummary       = document.getElementById('btn-summary');
 
-// --- Utils ---
 function updateTimestamp() {
   lastUpdatedEl.textContent = new Date().toLocaleTimeString();
 }
@@ -19,13 +17,10 @@ function setBtnLoading(btn, isLoading) {
     : (btn.id === 'btn-raw' ? 'Raw View' : 'Summary View');
 }
 
-// Ẩn vùng chi tiết
 function hideDetails() {
   detailsContainer.innerHTML = '';
   detailsContainer.classList.add('hidden');
 }
-
-// Hiện vùng chi tiết
 function showDetails() {
   detailsContainer.classList.remove('hidden');
 }
@@ -33,11 +28,10 @@ function showDetails() {
 // --- Raw View ---
 async function loadRaw() {
   setBtnLoading(btnRaw, true);
-  hideDetails();  // Ẩn chi tiết mỗi khi load lại
+  hideDetails();
   try {
     const res  = await fetch('/api/data');
     const rows = await res.json();
-
     if (!Array.isArray(rows) || rows.length === 0) {
       container.innerHTML = '<div class="text-center py-4">Không có dữ liệu</div>';
     } else {
@@ -66,18 +60,16 @@ async function loadRaw() {
   }
 }
 
-// --- Summary View + click to details ---
+// --- Summary View ---
 async function loadSummary() {
   setBtnLoading(btnSummary, true);
-  hideDetails();  // Ẩn chi tiết khi chuyển view
+  hideDetails();
   try {
     const res  = await fetch('/api/summary');
     const data = await res.json();
-
     if (!Array.isArray(data) || data.length === 0) {
       container.innerHTML = '<div class="text-center py-4">Không có dữ liệu summary</div>';
     } else {
-      // Sort theo số cuối máy
       const withName    = data.filter(d => d.machine?.trim());
       const withoutName = data.filter(d => !d.machine?.trim());
       withName.sort((a, b) => {
@@ -87,7 +79,7 @@ async function loadSummary() {
       });
       const sorted = [...withName, ...withoutName];
 
-      // Build summary table
+      let totalSum = 0;
       let html = `
         <table id="summary-table" class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
@@ -98,19 +90,28 @@ async function loadSummary() {
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
       `;
+
       sorted.forEach(({ machine, total }) => {
+        totalSum += Number(total);
         html += `
           <tr data-machine="${machine}" class="hover:bg-gray-100 cursor-pointer">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${machine || '<blank>'}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">${total}</td>
+            <td class="px-6 py-4 text-sm text-gray-900">${machine || '<blank>'}</td>
+            <td class="px-6 py-4 text-sm text-gray-900 text-right">${Number(total).toLocaleString()}</td>
           </tr>
         `;
       });
-      html += `</tbody></table>`;
+
+      html += `
+          <tr class="font-bold bg-gray-100">
+            <td class="px-6 py-4 text-sm text-gray-900">Tổng cộng</td>
+            <td class="px-6 py-4 text-sm text-gray-900 text-right">${totalSum.toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>`;
+
       container.innerHTML = html;
 
-      // Gắn sự kiện click cho từng dòng summary
-      document.querySelectorAll('#summary-table tbody tr').forEach(tr => {
+      document.querySelectorAll('#summary-table tbody tr[data-machine]').forEach(tr => {
         tr.addEventListener('click', () => {
           const machine = tr.dataset.machine;
           loadDetails(machine);
@@ -126,18 +127,17 @@ async function loadSummary() {
   }
 }
 
-// --- Load chi tiết cho một máy ---
 async function loadDetails(machine) {
-  showDetails();  // Hiện khung chi tiết
+  showDetails();
   detailsContainer.innerHTML = '<div class="text-center py-4">Loading details…</div>';
   try {
-    const res     = await fetch(`/api/details?machine=${encodeURIComponent(machine)}`);
-    const details= await res.json();
+    const res = await fetch(`/api/details?machine=${encodeURIComponent(machine)}`);
+    const details = await res.json();
     if (!Array.isArray(details) || details.length === 0) {
       detailsContainer.innerHTML = `<div class="text-center py-4">Không có chi tiết cho "${machine}"</div>`;
       return;
     }
-    // Build chi tiết table
+
     let html = `
       <h2 class="text-lg font-semibold mb-2">Chi tiết đơn cho: ${machine}</h2>
       <table class="min-w-full divide-y divide-gray-200">
@@ -154,10 +154,10 @@ async function loadDetails(machine) {
     details.forEach(d => {
       html += `
         <tr>
-          <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">${d.order}</td>
-          <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">${d.brandCode}</td>
-          <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">${d.productType}</td>
-          <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap text-right">${d.quantity}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${d.order}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${d.brandCode}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${d.productType}</td>
+          <td class="px-4 py-2 text-sm text-gray-800 text-right">${Number(d.quantity).toLocaleString()}</td>
         </tr>
       `;
     });
@@ -169,12 +169,10 @@ async function loadDetails(machine) {
   }
 }
 
-// --- Event bindings & initial load ---
 btnRaw.addEventListener('click', loadRaw);
 btnSummary.addEventListener('click', loadSummary);
-
-// Default: load Summary View
 loadSummary();
+
 async function searchOrders() {
   const input = document.getElementById('searchBox').value.trim();
   if (!input) return;
@@ -185,9 +183,7 @@ async function searchOrders() {
 
   if (!data || data.length <= 1) return;
 
-  const header = data[0];
   const results = [];
-
   for (const code of orderList) {
     const found = data.find(row => String(row[2] || '').toUpperCase() === code);
     if (found) {
@@ -201,19 +197,19 @@ async function searchOrders() {
     }
   }
 
-  let html = `<h3>Kết quả tìm kiếm:</h3>`;
+  let html = `<h3 class="text-lg font-semibold mb-2">Kết quả tìm kiếm:</h3>`;
   if (results.length === 0) {
     html += `<p>Không tìm thấy đơn hàng nào.</p>`;
   } else {
     html += `
-      <table border="1" cellspacing="0" cellpadding="5">
-        <thead>
+      <table class="min-w-full table-auto border-collapse border">
+        <thead class="bg-gray-50">
           <tr>
-            <th>ORDER</th>
-            <th>BRAND CODE</th>
-            <th>PRODUCT TYPE</th>
-            <th>QUANTITY</th>
-            <th>MACHINE</th>
+            <th class="border px-2 py-1">ORDER</th>
+            <th class="border px-2 py-1">BRAND CODE</th>
+            <th class="border px-2 py-1">PRODUCT TYPE</th>
+            <th class="border px-2 py-1 text-right">QUANTITY</th>
+            <th class="border px-2 py-1">MACHINE</th>
           </tr>
         </thead>
         <tbody>
@@ -221,20 +217,20 @@ async function searchOrders() {
     results.forEach(row => {
       html += `
         <tr>
-          <td>${row.order}</td>
-          <td>${row.brand}</td>
-          <td>${row.type}</td>
-          <td>${row.quantity}</td>
-          <td>${row.machine}</td>
+          <td class="border px-2 py-1">${row.order}</td>
+          <td class="border px-2 py-1">${row.brand}</td>
+          <td class="border px-2 py-1">${row.type}</td>
+          <td class="border px-2 py-1 text-right">${Number(row.quantity).toLocaleString()}</td>
+          <td class="border px-2 py-1">${row.machine}</td>
         </tr>
       `;
     });
-
     html += `</tbody></table>`;
   }
 
   document.getElementById('searchResult').innerHTML = html;
 }
+
 function clearSearch() {
   document.getElementById('searchBox').value = '';
   document.getElementById('searchResult').innerHTML = '';

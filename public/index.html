@@ -13,16 +13,16 @@
       Centre Line Schedule Dashboard
     </h1>
 
-    <div class="flex items-center gap-2 mt-4">
-      <button id="btn-raw" class="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300">Raw View</button>
-      <button id="btn-summary" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Summary View</button>
-      <div id="last-updated" class="ml-auto text-sm text-gray-500">Cập nhật: --:--</div>
-    </div>
-
     <div class="mt-6 flex items-center gap-2">
       <input id="searchBox" placeholder="RPRO-1234|RPRO-5678..." class="flex-1 border p-2 rounded" />
       <button onclick="searchOrders()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Tìm</button>
       <button onclick="clearSearch()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Xóa</button>
+    </div>
+
+    <div class="flex items-center gap-2 mt-4">
+      <button id="btn-raw" class="px-4 py-1 bg-gray-200 rounded hover:bg-gray-300">Raw View</button>
+      <button id="btn-summary" class="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Summary View</button>
+      <div id="last-updated" class="ml-auto text-sm text-gray-500">Cập nhật: --:--</div>
     </div>
 
     <div id="searchResult" class="mt-4"></div>
