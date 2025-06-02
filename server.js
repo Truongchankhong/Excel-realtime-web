@@ -1,4 +1,3 @@
-
 // server.js
 const express = require('express');
 const path = require('path');
@@ -37,7 +36,7 @@ app.get('/api/data', (req, res) => res.json(cachedData));
 // API summary
 app.get('/api/summary', (req, res) => {
   if (cachedData.length <= 1) return res.json([]);
-  const HEADER = 1, MIDX = 57, QIDX = 6;  // BG = 57, G = 6
+  const HEADER = 1, MIDX = 57, QIDX = 6;
   const map = {};
   for (let i = HEADER; i < cachedData.length; i++) {
     const row = cachedData[i];
@@ -48,12 +47,12 @@ app.get('/api/summary', (req, res) => {
   res.json(Object.entries(map).map(([machine, total]) => ({ machine, total })));
 });
 
-// API details
+// API details (đã thêm PU)
 app.get('/api/details', (req, res) => {
   const machine = req.query.machine;
   if (!machine) return res.status(400).json({ error: 'Thiếu máy' });
 
-  const HEADER = 1, MIDX = 57, OIDX = 2, BIDX = 3, TIDX = 5, QIDX = 6;
+  const HEADER = 1, MIDX = 57, OIDX = 2, BIDX = 3, TIDX = 5, QIDX = 6, PUIDX = 37;
   const details = [];
   for (let i = HEADER; i < cachedData.length; i++) {
     const row = cachedData[i];
@@ -62,7 +61,8 @@ app.get('/api/details', (req, res) => {
         order: row[OIDX] || '',
         brandCode: row[BIDX] || '',
         productType: row[TIDX] || '',
-        quantity: parseFloat(row[QIDX]) || 0
+        quantity: parseFloat(row[QIDX]) || 0,
+        pu: row[PUIDX] || ''
       });
     }
   }
